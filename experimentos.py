@@ -49,12 +49,19 @@ def parte2(X, y):
     print("PARTE 2 — Random Forest (10 divisões treino/teste)")
     print("─" * 60)
 
-    maes_treino, maes_teste = avaliar_random_forest(X, y, n_splits=10, n_estimators=100)
+    maes_treino, maes_teste, ultimo_modelo, X_test, y_test = \
+        avaliar_random_forest(X, y, n_splits=10, n_estimators=100)
 
     for i, (tr, te) in enumerate(zip(maes_treino, maes_teste), 1):
         print(f"  Divisão {i:02d} | MAE Treino: {tr:.2f}  |  MAE Teste: {te:.2f}")
 
     resumo(maes_treino, maes_teste)
+
+    print("\n  5 exemplos — último modelo (divisão 10):")
+    print(f"  {'Real':>8}  {'Previsto':>8}")
+    for real, prev in zip(y_test[:5], ultimo_modelo.predict(X_test)[:5]):
+        print(f"  {real:>8.1f}  {prev:>8.1f}")
+
     return maes_treino, maes_teste
 
 
@@ -96,7 +103,7 @@ def parte4(X, y, best_depth):
     media_treino, std_treino = [], []
 
     for n_trees in n_trees_list:
-        tr_list, te_list = avaliar_random_forest(
+        tr_list, te_list, _, _, _ = avaliar_random_forest(
             X, y, n_splits=10, max_depth=best_depth, n_estimators=n_trees
         )
         media_treino.append(np.mean(tr_list));  std_treino.append(np.std(tr_list))

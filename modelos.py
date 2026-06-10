@@ -36,6 +36,7 @@ def avaliar_random_forest(X, y, n_splits=10, max_depth=None, n_estimators=100):
     Retorna listas de MAE treino/teste.
     """
     maes_treino, maes_teste = [], []
+    ultimo_modelo, ultimo_X_test, ultimo_y_test = None, None, None
 
     for X_train, X_test, y_train, y_test in gerar_splits(X, y, n=n_splits):
         seed = len(maes_treino)
@@ -45,8 +46,9 @@ def avaliar_random_forest(X, y, n_splits=10, max_depth=None, n_estimators=100):
         modelo.fit(X_train, y_train)
         maes_treino.append(mean_absolute_error(y_train, modelo.predict(X_train)))
         maes_teste.append(mean_absolute_error(y_test,  modelo.predict(X_test)))
+        ultimo_modelo, ultimo_X_test, ultimo_y_test = modelo, X_test, y_test
 
-    return maes_treino, maes_teste
+    return maes_treino, maes_teste, ultimo_modelo, ultimo_X_test, ultimo_y_test
 
 
 def resumo(maes_treino, maes_teste, label=""):
